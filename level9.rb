@@ -2,21 +2,19 @@ class Player
 
   def play_turn(warrior)
     @warrior = warrior
-    @health = 20 unless @health
+    @health ||= 20
     @space = @warrior.feel
-    
     do_something()
-    
     @health = warrior.health
   end
   
   def do_something()
+    min_health = 10
     return turn_around if @space.wall?
     return rescue_captive if @space.captive?
     return attack if @space.enemy?
-    return flee if @warrior.health < 7 && under_attack
     return shoot_arrow if clear_shot && !under_attack
-    return rest if @warrior.health < 12 && !under_attack
+    return rest if @warrior.health < min_health && !under_attack
     return walk
   end
   
@@ -26,10 +24,6 @@ class Player
   
   def rest()
     @warrior.rest!
-  end
-  
-  def flee()
-    @warrior.walk!(:backward)
   end
   
   def shoot_arrow()
